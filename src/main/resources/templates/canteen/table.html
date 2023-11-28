@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/layuimini/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuimini/css/public.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <table class="layui-hide" id="test" lay-filter="test"></table>
+    </div>
+</div>
+
+<!--试用这种，还是直接方法好理解-->
+<script type="text/html" id="convertDept">
+    {{#
+        return d.dept.deptName;
+    }}
+</script>
+<script th:src="@{/layuimini/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
+<script th:src="@{/layuimini/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<!-- 引入 layui.js -->
+<!--<script src="//unpkg.com/layui@2.8.18/dist/layui.js"></script>-->
+<!--<script>-->
+<script type="text/javascript" th:inline="javascript">
+
+    /*<![CDATA[*/
+    const baseUrl = /*[[@{/}]]*/ '';
+    /*]]>*/
+    layui.use(['table',], function(){
+        var table = layui.table;
+
+        Date.prototype.Format = function (fmt) {
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "H+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+        var date = new Date().Format("yyyy-MM-dd");
+        // 创建渲染实例
+        table.render({
+            elem: '#test',
+            url: baseUrl + 'order/getOrders',
+            where:{
+                startTime: date,
+                endTime:date,
+                isGroupBy:1
+            },
+            cols: [[ //标题栏
+                {field: 'name', title: '菜名', width: 120},
+                {field: 'number', title: '数量', width: 80},
+            ]],
+            page:true,
+        })
+    });
+
+</script>
+
+</body>
+</html>

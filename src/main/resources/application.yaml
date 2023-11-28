@@ -1,0 +1,31 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /houtai
+
+
+spring:
+  datasource:
+    username: root
+    password: abc123
+    url: jdbc:mysql://localhost:3306/orderingsystem?serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  thymeleaf:
+    cache: false
+#    prefix: classpath:/static/
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: abc123
+
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+logging:
+  level:
+    root: info

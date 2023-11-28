@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.orderingsystem.recipe.mapper.RecipeMapper">
+
+    <resultMap id="recipeMap" type="com.example.orderingsystem.recipe.po.Recipe">
+        <id column="cid" property="cid"/>
+        <result column="name" property="name"/>
+        <result column="photo" property="photo"/>
+        <result column="unit" property="unit"/>
+        <result column="price" property="price"/>
+        <result column="class_id" property="classId"/>
+        <association property="foodClass"
+                     select="com.example.orderingsystem.recipe.mapper.FoodClassMapper.getClassById"
+                     column="{id=class_id}">
+        </association>
+    </resultMap>
+    <select id="getAllRecipe" resultMap="recipeMap">
+        select * from recipe
+    </select>
+    <select id="getRecipeByIds" resultType="com.example.orderingsystem.recipe.po.Recipe">
+        select * from recipe where cid in (${ids})
+    </select>
+</mapper>

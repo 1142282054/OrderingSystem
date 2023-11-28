@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{../layuimini/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{../layuimini/css/public.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">日期范围</label>
+                            <div class="layui-inline" id="ID-laydate-range">
+                                <div class="layui-input-inline">
+                                    <input type="text" name="startDate" autocomplete="off" id="ID-laydate-start-date" class="layui-input" placeholder="开始日期">
+                                </div>
+                                <div class="layui-form-mid">-</div>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="endDate" autocomplete="off" id="ID-laydate-end-date" class="layui-input" placeholder="结束日期">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" id="btn-search" class="layui-btn layui-btn-normal layui-btn-radius"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="reset" id="btn-reset" class="layui-btn layui-btn-primary layui-btn-radius"><i class="layui-icon"></i> 重 置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+    </div>
+</div>
+
+<script th:src="@{/layuimini/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
+<script th:src="@{../layuimini/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<!-- 引入 layui.js -->
+<!--<script src="//unpkg.com/layui@2.8.18/dist/layui.js"></script>-->
+<!--<script>-->
+<script type="text/javascript" th:inline="javascript">
+
+    /*<![CDATA[*/
+    const baseUrl = /*[[@{/}]]*/ '';
+    /*]]>*/
+
+    function refreshTable(){
+        $("#btn-reset").click();
+        $("#btn-search").click();
+    }
+
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+        var laydate = layui.laydate;
+
+
+        laydate.render({
+            elem: '#ID-laydate-start-date'
+        });
+
+        laydate.render({
+            elem: '#ID-laydate-end-date'
+        });
+
+        table.render({
+            elem: '#currentTableId',
+            url: baseUrl + 'order/getOrders',
+            where:{
+                // isGroupBy:1
+            },
+            defaultToolbar: true,
+            cols: [ [//防转义
+                {field: 'time', title: '时间', width: 180,templet:function (d){
+                        return d.ctime.substr(0,10);
+                }},
+                {field: 'user.nickname', width: 100, title: '姓名', templet:function(d){
+                     return d.user.nickname;
+                    }},
+                {field: 'name', width: 100, title: '菜名' },
+                {field: 'price', width: 80, title: '价格'},
+                {field: 'number', width: 80, title: '数量'},
+                {field: 'total', width: 80, title: '小计',templet:function (d){
+                    return d.number * d.price;
+                    }},
+                ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'grid'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            //包含表单元素、提交数据、类相关信息
+            // console.log(data)
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    name: data.field.name,
+                    startDate: data.field.startDate,
+                    endDate: data.field.endDate
+                }
+            });
+
+            return false;
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                var index = layer.open({
+                    title: '添加用户',
+                    type: 2,
+                    // shade: 0.2,
+                    shade: 0,
+                    maxmin:true,
+                    // shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: baseUrl + 'emp/add/ui',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                //    没有选中任何数据
+                if(data.length == 0){
+                    layer.alert("您没有选中任何数据",{icon:2,anim:6,time:500});
+                    return false;
+                }
+                // 删除验证
+                layer.confirm('确定删除选中吗?', {icon: 3, title:'提示'}, function(index){
+
+                    idsArr = new Array();
+                    data.forEach(item => {
+                        idsArr.push(item.empId)
+                    })
+                    var url = baseUrl + "emp/"+ idsArr.join(",");
+                    const params = {
+                        _method : 'DELETE',
+                    }
+                    $("#delete-ids-btn").attr("disabled","disabled").addClass("layui-btn-disabled")
+                    $.post(url,params,function (response){
+                        if (response.code == 0){
+                            layer.msg(response.msg,{icon:6,time:1000}, function () {
+                                //重置表格数据
+                                refreshTable();
+                            });
+                        }else {
+                            layer.msg(response.message,{icon:5,time:1000,anim:6});
+                        }
+                        $("#delete-ids-btn").removeAttr("disabled","disabled").removeClass("layui-btn-disabled")
+                    })
+
+                    layer.close(index);
+                });
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>
