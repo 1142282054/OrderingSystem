@@ -19,9 +19,9 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">用户姓名</label>
+                            <label class="layui-form-label">用户ID</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="name" autocomplete="off" class="layui-input">
+                                <input type="text" name="uid" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -29,10 +29,6 @@
                             <div class="layui-inline" id="ID-laydate-range">
                                 <div class="layui-input-inline">
                                     <input type="text" name="startDate" autocomplete="off" id="ID-laydate-start-date" class="layui-input" placeholder="开始日期">
-                                </div>
-                                <div class="layui-form-mid">-</div>
-                                <div class="layui-input-inline">
-                                    <input type="text" name="endDate" autocomplete="off" id="ID-laydate-end-date" class="layui-input" placeholder="结束日期">
                                 </div>
                             </div>
                         </div>
@@ -68,6 +64,22 @@
         $("#btn-search").click();
     }
 
+    Date.prototype.Format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "H+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
     layui.use(['form', 'table'], function () {
         var $ = layui.jquery,
             form = layui.form,
@@ -76,11 +88,9 @@
 
 
         laydate.render({
-            elem: '#ID-laydate-start-date'
-        });
-
-        laydate.render({
-            elem: '#ID-laydate-end-date'
+            elem: '#ID-laydate-start-date',
+            type: 'month',
+            format: 'yyyy/MM/01'
         });
 
         table.render({
@@ -92,10 +102,13 @@
             defaultToolbar: true,
             cols: [ [//防转义
                 {field: 'time', title: '时间', width: 180,templet:function (d){
-                        return d.ctime.substr(0,10);
+                        return d.ctime != null ? d.ctime.substr(0,10):'';
                 }},
+                {field: 'uid', width: 100, title: 'ID', templet:function(d){
+                        return d.uid != null ? d.uid : '';
+                    }},
                 {field: 'user.nickname', width: 100, title: '姓名', templet:function(d){
-                     return d.user.nickname;
+                     return d.user != null ? d.user.nickname : '';
                     }},
                 {field: 'name', width: 100, title: '菜名' },
                 {field: 'price', width: 80, title: '价格'},
@@ -113,15 +126,33 @@
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             //包含表单元素、提交数据、类相关信息
-            // console.log(data)
+            let endTime = null;
+            let startTime = null;
+            if (data.field.startDate != ''){
+                let dateTime = new Date(data.field.startDate + '')
+                startTime = new Date(data.field.startDate + '')
+                console.log(startTime)
+                endTime = new Date(dateTime.setMonth(dateTime.getMonth() + 1))
+                console.log(endTime)
+                endTime = endTime.Format("yyyy-MM-dd")
+                startTime = startTime.Format("yyyy-MM-dd")
+                console.log(endTime)
+                console.log(startTime)
+            }
+            let isGroupBy = null;
+            if (data.field.uid == ''){
+                isGroupBy = 1
+            }
+
             table.reload('currentTableId', {
                 page: {
                     curr: 1
                 }
                 , where: {
-                    name: data.field.name,
-                    startDate: data.field.startDate,
-                    endDate: data.field.endDate
+                    uid:data.field.uid,
+                    isGroupBy: isGroupBy,
+                    startTime: startTime,
+                    endTime: endTime
                 }
             });
 

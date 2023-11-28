@@ -25,6 +25,18 @@
         </association>
     </resultMap>
 
+    <resultMap id="orderListByGroup" type="com.example.orderingsystem.order.po.Order">
+
+        <result column="name" property="name"/>
+        <result column="mid" property="mid"/>
+        <result column="number" property="number"/>
+
+        <association property="price"
+                     select="com.example.orderingsystem.recipe.mapper.MenuItemMapper.getPriceByTime"
+                     column="{name = name,mid = mid}">
+        </association>
+    </resultMap>
+
     <insert id="addOrderList">
         insert into `order`(id,uid,name,mid,ctime,number,sid) values
             <foreach collection="orderList" item="order" separator="," >
@@ -56,9 +68,15 @@
         </where>
         limit #{page.start},#{page.limit}
     </select>
-    <select id="getOrdersAndGroup" resultType="com.example.orderingsystem.order.po.Order">
-        select `name`, SUM(number) as number from `order`
+    <select id="getOrdersAndGroup" resultMap="orderListByGroup">
+        select `name`,mid, SUM(number) as number from `order`
         <where>
+            <if test="page.uid != null">
+                uid = #{page.uid}
+            </if>
+            <if test="page.uid != null and page.startTime != null">
+                and
+            </if>
             <if test="page.startTime != null">
                 <![CDATA[ctime >= #{page.startTime}]]>
             </if>
