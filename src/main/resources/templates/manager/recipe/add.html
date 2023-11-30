@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/layuimini/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuimini/css/public.css}" media="all">
+    <style>
+        body{
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">菜名</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" lay-verify="required" value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">单位</label>
+        <div class="layui-input-block">
+            <input type="text" name="unit" lay-verify="required" value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">价格</label>
+        <div class="layui-input-block">
+            <input type="text" name="price" lay-verify="required | number"  value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">介绍</label>
+        <div class="layui-input-block">
+            <input type="text" name="info" value="" class="layui-input" lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">菜系</label>
+        <div class="layui-input-block">
+            <select name="classId" lay-verify="required">
+                <option value="">请选择</option>
+                <option th:each="foodClass,stat : ${session.foodClassList}"
+                        th:value="${foodClass.classId}"
+                        th:text="${foodClass.name}">
+                </option>
+            </select>
+        </div>
+    </div>
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label required">选择图片</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <input type="file" name="file" class="layui-btn">-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="layui-form-item" style="padding-left: 150px">
+        <button type="button" class="layui-btn" id="ID-upload-demo-btn">
+            <i class="layui-icon layui-icon-upload"></i> 选择头像
+        </button>
+        <div style="width: 132px;">
+            <div class="layui-upload-list">
+                <img class="layui-upload-img" id="ID-upload-demo-img" style="width: 100%; height: 92px;">
+                <div id="ID-upload-demo-text"></div>
+            </div>
+            <div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="filter-demo">
+                <div class="layui-progress-bar" lay-percent=""></div>
+            </div>
+            <button class="layui-btn layui-btn-normal" id="ID-upload-demo-action" style="">上传</button>
+<!--            style="display: none"-->
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="submit"  class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn" id="saveBtn" value="确认添加"></input>
+        </div>
+    </div>
+</div>
+<script th:src="@{/layuimini/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
+<script th:src="@{/layuimini/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    const baseUrl = /*[[@{/}]]*/ '';
+    /*]]>*/
+    layui.use(['form','laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer;
+            // $ = layui.$;
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#birthday-data' //指定元素
+        });
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            $("#saveBtn").attr("disabled","disabled").addClass("layui-btn-disabled")
+
+            $("#ID-upload-demo-btn").attr("data-name",data.field.name);
+            console.log($("#ID-upload-demo-btn").attr("data-name"));
+            let url = baseUrl + "recipe/addRecipe"
+            $.post(url,data.field,function (response){
+                if (response.code == 0){
+                    layer.msg(response.meg,{icon:6,time:1000}, function () {
+                        $("#ID-upload-demo-action").click();
+                        //重置表格数据
+                        parent.refreshTable();
+                        //解除绑定事件，并关闭弹出层
+                        var iframeIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(iframeIndex,function (){
+                            $(window).off("resize");
+                        });
+                    });
+                }else {
+                    layer.msg(response.message,{icon:5,time:1000,anim:6});
+                    $("#saveBtn").removeAttr("disabled","disabled").removeClass("layui-btn-disabled")
+                }
+            })
+            return false;
+        });
+
+    });
+
+    layui.use(function() {
+        var upload = layui.upload;
+        var layer = layui.layer;
+        var element = layui.element;
+        var $ = layui.$;
+        // 单图片上传
+        var uploadInst = upload.render({
+            elem: '#ID-upload-demo-btn',
+            url: baseUrl + 'recipe/addRecipePic', // 实际使用时改成您自己的上传接口即可。
+            data:{
+                name: function(){
+                    return $("#ID-upload-demo-btn").attr("data-name");
+                }
+            },
+            auto:false,
+            bindAction: '#ID-upload-demo-action',
+            before: function (obj) {
+                // 预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#ID-upload-demo-img').attr('src', result); // 图片链接（base64）
+                });
+
+                element.progress('filter-demo', '0%'); // 进度条复位
+                layer.msg('上传中', {icon: 16, time: 0});
+            },
+            done: function (res) {
+                // 若上传失败
+                if (res.code != 0) {
+                    return layer.msg('上传失败');
+                }
+                // 上传成功的一些操作
+                // …
+                $('#ID-upload-demo-text').html(''); // 置空上传失败的状态
+            },
+            error: function () {
+                // 演示失败状态，并实现重传
+                var demoText = $('#ID-upload-demo-text');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    uploadInst.upload();
+                });
+            },
+            // 进度条
+            progress: function (n, elem, e) {
+                element.progress('filter-demo', n + '%'); // 可配合 layui 进度条元素使用
+                if (n == 100) {
+                    layer.msg('上传完毕', {icon: 1});
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

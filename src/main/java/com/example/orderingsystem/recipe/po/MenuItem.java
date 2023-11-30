@@ -9,7 +9,7 @@ public class MenuItem {
   private Integer cid;
   private Integer mid;
   private String name;
-  private String photo;
+  private byte[] photo;
   private String unit;
   private Integer classId;
   private double price;

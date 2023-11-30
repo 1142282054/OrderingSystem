@@ -8,4 +8,7 @@
     <select id="getClassById" resultType="com.example.orderingsystem.recipe.po.FoodClass">
         select * from food_class where class_id  = #{id}
     </select>
+    <select id="getFoodClassList" resultType="com.example.orderingsystem.recipe.po.FoodClass">
+        select * from food_class
+    </select>
 </mapper>

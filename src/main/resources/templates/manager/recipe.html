@@ -65,7 +65,9 @@
                                                     </div>
                                                     <div class="panel-content">
 <!--                                                        <h1 class="no-margins">1234</h1>-->
-                                                        <div style="margin: auto ;height: 100px;width: 100px; background-color: pink;"></div>
+                                                        <div style="margin: auto ;height: 100px;width: 100px; background-color: pink;">
+                                                            <img th:src="@{/recipe/getRecipePic(cid=${recipe.cid})}" alt="" style="width: 100%;">
+                                                        </div>
                                                         <div style="text-align: center">
                                                             <small>[[ ${recipe.price} ]]元/</small>
                                                             <small>[[ ${recipe.unit} ]]</small>

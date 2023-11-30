@@ -17,10 +17,46 @@
                      column="{id=class_id}">
         </association>
     </resultMap>
+    <insert id="addRecipe">
+        insert into recipe(cid,name,photo,unit,class_id,price,info)
+        values (null,#{name},#{photo},#{unit},#{classId},#{price},#{info})
+    </insert>
+    <update id="addRecipePic">
+        update recipe set photo = #{pic} where `name` = #{name}
+    </update>
+    <update id="updateRecip">
+        update recipe set `name` = #{name},
+                          photo = #{photo},
+                          unit = #{unit},
+                          class_id = #{classId},
+                          price = #{price},
+                          info = #{info}
+        where cid = #{cid}
+    </update>
+    <delete id="deleteRecipes">
+        delete from recipe where cid in (${ids})
+    </delete>
     <select id="getAllRecipe" resultMap="recipeMap">
         select * from recipe
     </select>
     <select id="getRecipeByIds" resultType="com.example.orderingsystem.recipe.po.Recipe">
         select * from recipe where cid in (${ids})
+    </select>
+    <select id="getRecipeList" resultMap="recipeMap" >
+        select * from recipe
+        <where>
+            <if test="name != null">
+                `name` like  "%"#{name}"%"
+            </if>
+        </where>
+    </select>
+    <select id="getRecipeByCid" resultMap="recipeMap">
+        select * from recipe where cid = #{cid}
+    </select>
+    <select id="getRecipePic">
+        select photo from recipe where cid = #{cid}
+    </select>
+    <select id="getRecipeById" resultType="com.example.orderingsystem.recipe.po.Recipe">
+        select * from recipe where cid = #{cid}
     </select>
 </mapper>

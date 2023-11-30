@@ -7,7 +7,7 @@ public class Recipe {
 
   private Integer cid;
   private String name;
-  private String photo;
+  private byte[] photo;
   private String unit;
   private Integer classId;
   private double price;

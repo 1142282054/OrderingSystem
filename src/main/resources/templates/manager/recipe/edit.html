@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/layuimini/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuimini/css/public.css}" media="all">
+    <style>
+        body{
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form" th:object="${empInfo}">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">用户名</label>
+        <div class="layui-input-block">
+            <input type="text" th:field="*{name}" lay-verify="required" lay-reqtext="用户名不能为空" placeholder="请输入用户名" value="" class="layui-input">
+            <tip>填写自己管理账号的名称。</tip>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">性别</label>
+        <div class="layui-input-block">
+            <input  type="radio" th:field="*{sex}" value="男" title="男">
+            <input  type="radio" th:field="*{sex}" value="女" title="女">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-block">
+            <input type="number" th:field="*{age}" lay-verify="number" placeholder="请输入年龄" value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">工资</label>
+        <div class="layui-input-block">
+            <input type="text" th:field="*{sal}" lay-verify="required | number"  value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required" >生日</label>
+        <div class="layui-input-block">
+            <input type="text" th:field="*{birthday}" id="birthday-data" class="layui-input" lay-verify="required | date">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">地址</label>
+        <div class="layui-input-block">
+            <input type="text" th:field="*{address}" placeholder="请输入职业" value="" class="layui-input" lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">部门</label>
+        <div class="layui-input-block">
+            <select th:field="*{deptId}" lay-verify="required">
+                <option value="">请选择</option>
+                <option th:each="dept,stat : ${deptList}"
+                        th:value="${dept.deptId}"
+                        th:text="${dept.deptName}">
+                </option>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn" id="saveBtn">确认修改</button>
+        </div>
+    </div>
+</div>
+<script th:src="@{/layuimini/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
+<script th:src="@{/layuimini/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    const baseUrl = /*[[@{/}]]*/ '';
+    /*]]>*/
+    layui.use(['form','laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer;
+            // $ = layui.$;
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#birthday-data' //指定元素
+        });
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            $("#saveBtn").attr("disabled","disabled").addClass("layui-btn-disabled")
+
+            let url = baseUrl + "emp";
+            data.field._method = "PUT";
+            data.field.empId = [[ ${empInfo.empId} ]];
+            $.post(url,data.field,function (response){
+                if (response.code == 0){
+                    layer.msg(response.meg,{icon:6,time:1000}, function () {
+                        //重置表格数据
+                        parent.refreshTable();
+                        //解除绑定事件，并关闭弹出层
+                        var iframeIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(iframeIndex,function (){
+                            $(window).off("resize");
+                        });
+                    });
+                }else {
+                    layer.msg(response.message,{icon:5,time:1000,anim:6});
+                    $("#saveBtn").removeAttr("disabled","disabled").removeClass("layui-btn-disabled")
+                }
+            })
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>
