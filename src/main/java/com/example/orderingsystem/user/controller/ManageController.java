@@ -1,5 +1,8 @@
 package com.example.orderingsystem.user.controller;
 
+import com.example.orderingsystem.order.po.Order;
+import com.example.orderingsystem.order.service.OrderService;
+import com.example.orderingsystem.order.vo.QueryPage;
 import com.example.orderingsystem.recipe.po.FoodClass;
 import com.example.orderingsystem.recipe.service.RecipeService;
 import org.springframework.boot.web.server.Http2;
@@ -21,9 +24,14 @@ public class ManageController {
     @Resource
     RecipeService recipeService;
 
-    @RequestMapping("/table")
-    public String table(){
+    @Resource
+    OrderService orderService;
 
+    @RequestMapping("/table")
+    public String table(QueryPage page, HttpSession session){
+        List<Order> orderList = orderService.getOrderList(page);
+        session.setAttribute("printList",orderList);
+        session.setAttribute("page",page);
         return "manager/table";
     }
 

@@ -45,7 +45,7 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public Recipe getRecipeByCid(Integer cid) {
         Recipe recipe = recipeMapper.getRecipeByCid(cid);
-        return null;
+        return recipe;
     }
 
     @Override

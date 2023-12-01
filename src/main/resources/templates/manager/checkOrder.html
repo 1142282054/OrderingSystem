@@ -6,7 +6,8 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" th:href="@{../layuimini/lib/layui-v2.6.3/css/layui.css}" media="all">
+<!--    <link rel="stylesheet" th:href="@{../layuimini/lib/layui-v2.6.3/css/layui.css}" media="all">-->
+    <link href="//unpkg.com/layui@2.9.0/dist/css/layui.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{../layuimini/css/public.css}" media="all">
 </head>
 <body>
@@ -16,7 +17,7 @@
         <fieldset class="table-search-fieldset">
             <legend>搜索信息</legend>
             <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form layui-form-pane" action="">
+                <form class="layui-form layui-form-pane" action="" lay-filter="search-form">
                     <div class="layui-form-item">
                         <div class="layui-inline">
                             <label class="layui-form-label">用户ID</label>
@@ -38,6 +39,9 @@
                         <div class="layui-inline">
                             <button type="reset" id="btn-reset" class="layui-btn layui-btn-primary layui-btn-radius"><i class="layui-icon"></i> 重 置</button>
                         </div>
+                        <div class="layui-inline">
+                            <div lay-on="get-print" class="layui-btn layui-btn-primary layui-btn-radius"><i class="layui-icon"></i>打印数据</div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -47,9 +51,9 @@
 
     </div>
 </div>
-
+<script src="//unpkg.com/layui@2.9.0/dist/layui.js"></script>
 <script th:src="@{/layuimini/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
-<script th:src="@{../layuimini/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+<!--<script th:src="@{../layuimini/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>-->
 <!-- 引入 layui.js -->
 <!--<script src="//unpkg.com/layui@2.8.18/dist/layui.js"></script>-->
 <!--<script>-->
@@ -80,11 +84,14 @@
         return fmt;
     }
 
-    layui.use(['form', 'table'], function () {
+
+    layui.use(['form', 'table','util'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table;
         var laydate = layui.laydate;
+
+        var util = layui.util;
 
 
         laydate.render({
@@ -214,6 +221,44 @@
             }
         });
 
+        util.on('lay-on',{
+            'get-print':function (othis){
+                let data =form.val('search-form');
+                console.log(data);
+
+
+                let endTime = null;
+                let startTime = null;
+                if (data.startDate != ''){
+                    let dateTime = new Date(data.startDate + '')
+                    startTime = new Date(data.startDate + '')
+                    console.log(startTime)
+                    endTime = new Date(dateTime.setMonth(dateTime.getMonth() + 1))
+                    console.log(endTime)
+                    endTime = endTime.Format("yyyy-MM-dd")
+                    startTime = startTime.Format("yyyy-MM-dd")
+                    console.log(endTime)
+                    console.log(startTime)
+                }
+                let index = layer.open({
+                    title: '打印订单',
+                    type: 2,
+                    // shade: 0.2,
+                    shade: 0,
+                    maxmin:true,
+                    // shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: baseUrl + 'manager/table?uid='+ data.uid +
+                        "&startTime=" + startTime +
+                        "&endTime=" + endTime +
+                        "&page=1&limit=20"
+                });
+
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            }
+        })
     });
 </script>
 

@@ -50,12 +50,12 @@ public class RecipeController {
     }
 
     @RequestMapping("/addRecipePage")
-    public String addRecipe(){
+    public String addRecipePage(){
         return "manager/recipe/add";
     }
 
     @GetMapping("/{cid}")
-    public String updateRecipe(@PathVariable("cid") Integer cid, HttpSession session){
+    public String updateRecipePage(@PathVariable("cid") Integer cid, HttpSession session){
         Recipe recipe = recipeService.getRecipeByCid(cid);
         if (recipe != null){
             session.setAttribute("recipe",recipe);

@@ -22,18 +22,35 @@
                     <th colspan="6" style="text-align: center;font-size: 20px;">员工月度订单汇总</th>
                 </tr>
                 <tr>
-                    <th colspan="2">员工</th><th colspan="2">联系电话</th><th colspan="2">统计月份</th>
+                    <th colspan="2" th:text="'员工：' + ${session.printList.get(0).user.nickname}">员工</th>
+                    <th colspan="2" th:text="'联系电话：' + ${session.printList.get(0).user.phone}">联系电话</th>
+                    <th colspan="2" th:text="|统计月份 : ${session.page.startTime.getYear() + 1900}年${session.page.startTime.getMonth()}月|">统计月份</th>
                 </tr>
                 <tr>
-                    <th>时间</th><th>菜名</th><th>单位</th><th>分量</th><th>单价</th><th>合计</th>
+                    <th>时间</th><th>菜名</th><th>分量</th><th>单价</th><th>合计</th>
                 </tr>
                 </thead>
                 <tbody>
+                <tr id="table-data" th:each="order,stat : ${session.printList}">
+                    <td th:text="${order.ctime}" class="parse-time">时间</td>
+                    <td th:text="${order.name}">菜名</td>
+                    <td th:text="${order.number}">分量</td>
+                    <td th:text="${order.price}">单价</td>
+                    <td class="price" th:text="${order.price * order.number}">合计</td>
+                </tr>
                 <tr>
-                    <td></td>
+                    <td id="totalPrice" colspan="5" style="text-align: right;padding-right: 150px"></td>
+<!--                    <td colspan="5" th:text="'合计金额：'+${session.printList.stream().mapToDouble(order -> order.price).sum()}"></td>-->
+                </tr>
+                <tr>
+                    <td colspan="2" th:text="'操作员：' + ${session.userInfo.nickname}"></td>
+                    <td colspan="3" id="operate-time"></td>
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="layui-row">
+            <div class="layui-btn layui-btn-fluid" id="print-form">打印订单汇总</div>
         </div>
 
     </div>
@@ -46,17 +63,52 @@
     }}
 </script>
 <script th:src="@{/layuimini/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
+<!--<script th:src="@{/layuimini/lib/printjs/print2.js}" charset="utf-8"></script>-->
 <script th:src="@{/layuimini/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
 <!-- 引入 layui.js -->
 <!--<script src="//unpkg.com/layui@2.8.18/dist/layui.js"></script>-->
 <!--<script>-->
-<script type="text/javascript" th:inline="javascript">
+<script type="text/javascript">
 
-    /*<![CDATA[*/
-    const baseUrl = /*[[@{/}]]*/ '';
-    /*]]>*/
+    Date.prototype.Format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "H+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
 
+    var totalPrice = 0;
+    $('#table-data .price').each(function (){
+        totalPrice += Number($(this).text());
+        console.log(this)
+        console.log(totalPrice)
+    })
+    $("#totalPrice").text("合计金额：￥"+ totalPrice);
 
+    $('#operate-time').text("操作时间：" + new Date().Format('yyyy-MM-dd HH:mm:ss'));
+
+    $('.parse-time').each(function (){
+        $(this).text(new Date($(this).text()).Format('yyyy-MM-dd'));
+    })
+console.log($('#print-table')[0])
+//    打印事件
+    $("#print-form").click(function (){
+        // printJS($('#print-table')[0],{ type: 'pdf'})
+        // printJS({printable: $('#print-table')[0], type: 'pdf'})
+        // printJS('#print-table', 'pdf')
+        // printJS('docs/PrintJS.pdf')
+        // window.print('#print-table',{});
+        window.print();
+    })
 </script>
 
 </body>

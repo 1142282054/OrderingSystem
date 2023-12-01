@@ -26,7 +26,6 @@
     </update>
     <update id="updateRecip">
         update recipe set `name` = #{name},
-                          photo = #{photo},
                           unit = #{unit},
                           class_id = #{classId},
                           price = #{price},
