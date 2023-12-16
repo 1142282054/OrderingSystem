@@ -66,7 +66,7 @@ class OrderingSystemApplicationTests {
 
     @Test
     void test03(){
-        Init init = testJsonMapper1.getInit();
+        Init init = testJsonMapper1.getInit(1);
         System.out.println(init);
     }
 

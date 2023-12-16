@@ -13,7 +13,6 @@ public class canteenController {
 
     @RequestMapping("/table")
     public String orderPage(){
-
         return "canteen/table";
     }
 }

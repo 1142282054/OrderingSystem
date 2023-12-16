@@ -9,10 +9,15 @@ import com.example.orderingsystem.user.po.User;
 public interface UserMapper {
     /**
      * 通过用户名获取user对象
-     * @param user
-     * @return
+     * @param user 用户信息
+     * @return 用户信息
      */
     public User getUserByNickname(User user);
 
+    /**
+     * 根据用户id获取用户信息
+     * @param uid 用户id
+     * @return 用户信息
+     */
     public User getUserById(Integer uid);
 }

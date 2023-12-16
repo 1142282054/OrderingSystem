@@ -38,7 +38,7 @@
     <select id="getMenuByTime" resultMap="menuItem">
         select * from menu_item where mid = #{mid}
     </select>
-    <select id="getPriceByTime" resultType="java.lang.Double">
+    <select id="getPrice" resultType="java.lang.Double">
         select price from menu_item where
             `name` = #{name} and mid = #{mid}
     </select>

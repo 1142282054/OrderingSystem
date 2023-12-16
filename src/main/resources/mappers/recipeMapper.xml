@@ -48,6 +48,7 @@
                 `name` like  "%"#{name}"%"
             </if>
         </where>
+        limit #{start},#{limit}
     </select>
     <select id="getRecipeByCid" resultMap="recipeMap">
         select * from recipe where cid = #{cid}

@@ -38,6 +38,16 @@ public class sendController {
         return "send/table";
     }
 
+    /**
+     * 更新送达状态
+     * 1.从session中获取配送员信息
+     * 2.添加配送表记录,获取配送id
+     * 3.修改订单信息
+     * @param order 送达的订单信息
+     * @param session
+     * @return
+     * @throws ParseException
+     */
     @ResponseBody
     @RequestMapping("/commit")
     public Result commit(@RequestBody Order order,HttpSession session) throws ParseException {

@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <!--    <link rel="stylesheet" th:href="@{../layuimini/lib/layui-v2.6.3/css/layui.css}" media="all">-->
-    <link href="//unpkg.com/layui@2.9.0/dist/css/layui.css" rel="stylesheet">
+    <link th:href="@{/layui/css/layui.css}" rel="stylesheet">
     <link rel="stylesheet" th:href="@{../layuimini/css/public.css}" media="all">
 </head>
 <body>
@@ -51,11 +51,9 @@
 
     </div>
 </div>
-<script src="//unpkg.com/layui@2.9.0/dist/layui.js"></script>
+<script th:src="@{/layui/layui.js}"></script>
 <script th:src="@{/layuimini/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
 <!--<script th:src="@{../layuimini/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>-->
-<!-- 引入 layui.js -->
-<!--<script src="//unpkg.com/layui@2.8.18/dist/layui.js"></script>-->
 <!--<script>-->
 <script type="text/javascript" th:inline="javascript">
 
@@ -84,7 +82,7 @@
         return fmt;
     }
 
-
+    //使用layui框架
     layui.use(['form', 'table','util'], function () {
         var $ = layui.jquery,
             form = layui.form,
@@ -93,13 +91,14 @@
 
         var util = layui.util;
 
-
+        //渲染日期选择器
         laydate.render({
             elem: '#ID-laydate-start-date',
             type: 'month',
             format: 'yyyy/MM/01'
         });
 
+        //渲染表格
         table.render({
             elem: '#currentTableId',
             url: baseUrl + 'order/getOrders',
@@ -130,7 +129,13 @@
             skin: 'grid'
         });
 
-        // 监听搜索操作
+        /**
+         * 监听搜索操作
+         * 1.时间格式化
+         * 2.isGroupBy判断
+         * 3.表格重构
+         *    -用户id\开始时间\结束时间\是否分组
+         */
         form.on('submit(data-search-btn)', function (data) {
             //包含表单元素、提交数据、类相关信息
             let endTime = null;
@@ -167,60 +172,11 @@
         });
 
         /**
-         * toolbar监听事件
+         * 获取打印页面
+         * 1.时间处理
+         * 2.使用layer打开新页面
+         *    注意: get的方式带上查询限制条件,用于数据回显
          */
-        table.on('toolbar(currentTableFilter)', function (obj) {
-            if (obj.event === 'add') {  // 监听添加操作
-                var index = layer.open({
-                    title: '添加用户',
-                    type: 2,
-                    // shade: 0.2,
-                    shade: 0,
-                    maxmin:true,
-                    // shadeClose: true,
-                    area: ['100%', '100%'],
-                    content: baseUrl + 'emp/add/ui',
-                });
-                $(window).on("resize", function () {
-                    layer.full(index);
-                });
-            } else if (obj.event === 'delete') {  // 监听删除操作
-                var checkStatus = table.checkStatus('currentTableId')
-                    , data = checkStatus.data;
-                //    没有选中任何数据
-                if(data.length == 0){
-                    layer.alert("您没有选中任何数据",{icon:2,anim:6,time:500});
-                    return false;
-                }
-                // 删除验证
-                layer.confirm('确定删除选中吗?', {icon: 3, title:'提示'}, function(index){
-
-                    idsArr = new Array();
-                    data.forEach(item => {
-                        idsArr.push(item.empId)
-                    })
-                    var url = baseUrl + "emp/"+ idsArr.join(",");
-                    const params = {
-                        _method : 'DELETE',
-                    }
-                    $("#delete-ids-btn").attr("disabled","disabled").addClass("layui-btn-disabled")
-                    $.post(url,params,function (response){
-                        if (response.code == 0){
-                            layer.msg(response.msg,{icon:6,time:1000}, function () {
-                                //重置表格数据
-                                refreshTable();
-                            });
-                        }else {
-                            layer.msg(response.message,{icon:5,time:1000,anim:6});
-                        }
-                        $("#delete-ids-btn").removeAttr("disabled","disabled").removeClass("layui-btn-disabled")
-                    })
-
-                    layer.close(index);
-                });
-            }
-        });
-
         util.on('lay-on',{
             'get-print':function (othis){
                 let data =form.val('search-form');
@@ -248,10 +204,12 @@
                     maxmin:true,
                     // shadeClose: true,
                     area: ['100%', '100%'],
-                    content: baseUrl + 'manager/table?uid='+ data.uid +
+                    content: baseUrl + 'manager/table?' +
+                        'uid='+ data.uid +
                         "&startTime=" + startTime +
                         "&endTime=" + endTime +
-                        "&page=1&limit=20"
+                        "&page=1" +
+                        "&limit=1000"
                 });
 
                 $(window).on("resize", function () {

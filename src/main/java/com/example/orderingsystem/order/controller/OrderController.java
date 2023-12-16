@@ -36,6 +36,13 @@ public class OrderController {
     @Resource
     OrderService orderService;
 
+    /**
+     * 获取临时菜单表
+     * @param tmpOrder
+     * @param session
+     * @return
+     * @throws ParseException
+     */
     @ResponseBody
     @RequestMapping("/tmpOrder")
     public Result tmpOrder(TmpOrder tmpOrder, HttpSession session) throws ParseException {
@@ -49,6 +56,16 @@ public class OrderController {
         return Result.fail();
     }
 
+    /**
+     * 添加的订单
+     * 1.session获取用户信息
+     * 2.把tmp信息转成order并批量插入到order表中(service)
+     * 3.删除tmp中的信息(service)
+     * @param tmpOrderList
+     * @param session
+     * @return
+     * @throws ParseException
+     */
     @ResponseBody
     @RequestMapping("/addOrder")
     public Result addOrder(@RequestBody List<TmpOrder> tmpOrderList, HttpSession session) throws ParseException {
@@ -63,6 +80,14 @@ public class OrderController {
         return Result.fail();
     }
 
+    /**
+     * 根据条件获取订单列表
+     * 1.先进行权限判断
+     * 2.获取订单列表
+     * @param page 查询条件
+     * @param session
+     * @return 订单列表
+     */
     @ResponseBody
     @RequestMapping("/getOrders")
     public Result getOrders(QueryPage page, HttpSession session){
@@ -71,8 +96,9 @@ public class OrderController {
             page.setUid(userInfo.getUid());
         }
         List<Order> orderList = orderService.getOrderList(page);
+        Integer count = orderService.countOrder(page);
         if (orderList != null){
-            return Result.successful(orderList, (long) orderList.size());
+            return Result.successful(orderList, (long)count);
         }
         return Result.fail();
     }

@@ -1,0 +1,19 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "welcome"
+  },
+  "logoInfo": {
+    "title": "后台管理",
+    "image": "layuimini/images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "配送情况",
+      "href": "send/table",
+      "icon": "fa fa-gears",
+      "target": "_self"
+    }
+  ]
+}

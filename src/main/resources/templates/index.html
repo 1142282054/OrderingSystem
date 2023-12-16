@@ -74,8 +74,8 @@
     </div>
 
 
-<!--    &lt;!&ndash; 移动导航 &ndash;&gt;-->
-<!--    <div class="layuimini-site-mobile"><i class="layui-icon"></i></div>-->
+    <!-- 移动导航 -->
+    <div class="layuimini-site-mobile"><i class="layui-icon"></i></div>
 
     <div class="layui-body">
 
@@ -115,7 +115,7 @@
     const baseUrl = /*[[@{/}]]*/ '';
     /*]]>*/
 
-
+    //时间格式化
     Date.prototype.Format = function (fmt) {
         var o = {
             "M+": this.getMonth() + 1, //月份
@@ -132,6 +132,7 @@
         return fmt;
     }
 
+    //使用layui框架
     layui.use(['jquery', 'layer', 'miniAdmin','miniTongji'], function () {
         var $ = layui.jquery,
             layer = layui.layer,
@@ -139,7 +140,6 @@
             miniTongji = layui.miniTongji;
 
         var options = {
-
             // iniUrl: baseUrl + "user/init ],
             iniUrl: baseUrl + "user/init",    // 初始化接口
             clearUrl: baseUrl + "layuimini/api/clear.json", // 缓存清理接口
@@ -165,7 +165,7 @@
 
         $('.login-out').on("click", function () {
             layer.msg('退出登录成功', function () {
-                window.location = baseUrl + 'logout';
+                window.location = baseUrl + 'user/logout';
             });
         });
     });

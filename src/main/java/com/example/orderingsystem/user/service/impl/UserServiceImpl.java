@@ -33,11 +33,12 @@ public class UserServiceImpl implements UserService {
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     /**
      * 登录验证
-     * @param user
+     * @param user 用户信息
      * @return
-     * 先通过账号查询出密码，
-     * 再进行安全性验证
-     * 成功返回对象，失败返回 null
+     * 1.先通过账号查询出密码，
+     * 2.再进行安全性验证
+     *  -成功:返回用户信息对象
+     *  -失败:返回 null
      */
     @Override
     public User checkLogin(User user) {
@@ -52,6 +53,9 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 根据角色id从redis中获取init.json配置
+     * 1.判断登录等级,获取不同key值
+     * 2.根据key值来获取redeis中对相应初始化信息
+     * 3.返回初始化信息
      * @param roleId
      * @return
      */
@@ -72,9 +76,15 @@ public class UserServiceImpl implements UserService {
         return initJson;
     }
 
+    /**
+     * 从mysql中获取登录信息
+     * @param role 用户权限等级
+     * @return 初始化信息
+     */
     @Override
     public String getInitJsonByMysql(Integer role) {
-        Init init = testJsonMapper.getInit();
+        Init init = testJsonMapper.getInit(role);
+
         return init.getInitList();
     }
 }

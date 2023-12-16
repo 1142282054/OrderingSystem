@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/manager")
-public class ManageController {
+public class ManagerController {
 
     @Resource
     RecipeService recipeService;
@@ -27,6 +27,15 @@ public class ManageController {
     @Resource
     OrderService orderService;
 
+    /**
+     * 获取打印页面
+     * 1.获取用户月度订单
+     * 2.存到session域
+     * 3.页面跳转
+     * @param page 查询信息(分页 查询限制)
+     * @param session
+     * @return
+     */
     @RequestMapping("/table")
     public String table(QueryPage page, HttpSession session){
         List<Order> orderList = orderService.getOrderList(page);
@@ -37,10 +46,14 @@ public class ManageController {
 
     @RequestMapping("/checkOrder")
     public String check(){
-
         return "manager/checkOrder";
     }
 
+    /**
+     * 获取菜谱管理页面
+     * @param session
+     * @return
+     */
     @RequestMapping("/recipeManage")
     public String recipeManage(HttpSession session){
         List<FoodClass> foodClasses = recipeService.getFoodClassList();

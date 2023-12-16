@@ -34,6 +34,18 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     SendMapper sendMapper;
 
+    /**
+     * 批量添加订单信息
+     * 1.把tmpOrder转成order:
+     *      1)name:tmp获取
+     *      2)time:Date转换
+     *      3)uid:session获取
+     *      4)mid:menuMapper查找
+     * 2.批量插入order表
+     * @param tmpOrderList 订单信息
+     * @param uid 用户id
+     * @throws ParseException
+     */
     public void addOrderList(List<TmpOrder> tmpOrderList, Integer uid) throws ParseException {
 //        把tmpOrder转成Oder
         List<Order> orderList = new ArrayList<>();
@@ -56,6 +68,15 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    /**
+     * 根基查询条件获取order列表
+     * 1.查看是否分组
+     *  -分组:    分组查询,获取菜名\数量\价格
+     *  -不分组:  根据条件获取全部信息
+     * 2.返回查询信息
+     * @param page 查询条件
+     * @return 订单列表
+     */
     @Override
     public List<Order> getOrderList(QueryPage page) {
         List<Order> orderList = null;
@@ -67,6 +88,15 @@ public class OrderServiceImpl implements OrderService {
         return orderList;
     }
 
+    /**
+     * 添加配送记录
+     * 1.创建一个并初始化一个配送信息
+     * 2.插入信息并获取配送id
+     * 3.返回配送id
+     * @param uid 配送员id
+     * @return 配送id
+     * @throws ParseException
+     */
     @Override
     public Send addSend(Integer uid) throws ParseException {
         Send send = new Send();
@@ -78,6 +108,12 @@ public class OrderServiceImpl implements OrderService {
         return send;
     }
 
+    /**
+     * 更新订单的配送状态
+     * @param order 订单信息
+     * @param send 配送id
+     * @return
+     */
     @Override
     public boolean commitOrder(Order order, Send send) {
         Integer update = orderMapper.updateOrders(order,send.getSid());
@@ -85,5 +121,23 @@ public class OrderServiceImpl implements OrderService {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 统计数量
+     * @param page 限制条件
+     * @return
+     */
+    @Override
+    public Integer countOrder(QueryPage page) {
+
+        Integer count = null;
+        if (page.getIsGroupBy() != null && page.getIsGroupBy() == 1){
+            count = orderMapper.countOrderByGroup(page);
+        }else {
+            count = orderMapper.countOrder(page);
+        }
+//        Integer count = orderMapper.countOrder(page);
+        return count;
     }
 }

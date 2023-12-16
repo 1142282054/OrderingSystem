@@ -39,65 +39,71 @@
     <div class="layuimini-main">
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
-<!--            <div class="layui-row layui-col-space15">-->
                 <div>
-<!--                <div class="layui-col-md6">-->
                     <div>
+<!--                    选择表单-->
                         <form class="layui-form" lay-filter="recipe-form">
-                        <div class="layui-card">
-                            <div class="layui-card-header" style="margin-bottom: 10px;">
-                                <i class="fa fa-warning icon"></i>
-                                <span style="margin-right: 100px;">数据统计</span>
-                                <button type="submit" id="btn-submit" class="layui-btn" lay-submit lay-filter="btn-submit">确认菜单</button>
-                                <button type="reset" id="reset-form" class="layui-btn layui-btn-primary">重置</button>
-                            </div>
-                            <div class="layui-card-body" style="overflow: hidden">
-                                <div class="welcome-module">
-                                    <div class="layui-row layui-col-space10" style="text-align: center;">
+                            <div class="layui-card">
+                                <div class="layui-card-header" style="margin-bottom: 10px;height: auto">
+                                    <i class="fa fa-warning icon"></i>
+                                    <span style="margin-right: 100px;">添加今日菜单</span>
+                                    <div class="layui-row">
+                                        <p>从下列菜谱中选择今天的菜单，选择完毕后点击提交按钮。</p>
+                                        <p>每天只能提交一次，后面添加不会生效</p>
+                                        <p>添加完毕后，即可到今日点餐界面点餐</p>
+                                    </div>
+                                    <div class="layui-row">
+                                        <button type="submit" id="btn-submit" class="layui-btn" lay-submit lay-filter="btn-submit">确认菜单</button>
+                                        <button type="reset" id="reset-form" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </div>
+                                <div class="layui-card-body" style="overflow: hidden">
+                                    <div class="welcome-module">
+                                        <div class="layui-row layui-col-space10" style="text-align: center;">
 
-                                        <div class="layui-col-md2 layui-col-xs4"
-                                             th:each="recipe,stat:${session.recipeList}" th:inline="text">
-                                            <div class="panel layui-bg-number">
-                                                <div class="panel-body ">
-                                                    <div class="panel-title">
-                                                        <span class="label pull-right layui-bg-blue">[[ ${recipe.foodClass.name} ]]</span>
-                                                        <h5>[[ ${recipe.name} ]]</h5>
-                                                    </div>
-                                                    <div class="panel-content">
-<!--                                                        <h1 class="no-margins">1234</h1>-->
-                                                        <div style="margin: auto ;height: 100px;width: 100px; background-color: pink;">
-                                                            <img th:src="@{/recipe/getRecipePic(cid=${recipe.cid})}" alt="" style="width: 100%;">
+                                            <div class="layui-col-md2 layui-col-xs4"
+                                                 th:each="recipe,stat:${session.recipeList}" th:inline="text">
+                                                <div class="panel layui-bg-number">
+                                                    <div class="panel-body ">
+                                                        <div class="panel-title">
+                                                            <span class="label pull-right layui-bg-blue">[[ ${recipe.foodClass.name} ]]</span>
+                                                            <h5>[[ ${recipe.name} ]]</h5>
                                                         </div>
-                                                        <div style="text-align: center">
-                                                            <small>[[ ${recipe.price} ]]元/</small>
-                                                            <small>[[ ${recipe.unit} ]]</small>
+                                                        <div class="panel-content">
+    <!--                                                        <h1 class="no-margins">1234</h1>-->
+                                                            <div style="margin: auto ;height: 100px;width: 100px; background-color: pink;">
+                                                                <img th:src="@{/recipe/getRecipePic(cid=${recipe.cid})}" alt="" style="width: 100%;">
+                                                            </div>
+                                                            <div style="text-align: center">
+                                                                <small>[[ ${recipe.price} ]]元/</small>
+                                                                <small>[[ ${recipe.unit} ]]</small>
+                                                            </div>
+                                                            <input type="checkbox" class="layui-input layui-input-inline"  lay-skin="tag" title="选取"
+                                                                   th:name="${recipe.cid}" >
+    <!--                                                        <p>[[ ${recipe.info} ]]</p>-->
                                                         </div>
-                                                        <input type="checkbox" class="layui-input layui-input-inline"  lay-skin="tag" title="选取"
-                                                               th:name="${recipe.cid}" >
-<!--                                                        <p>[[ ${recipe.info} ]]</p>-->
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="layui-col-md2 layui-col-xs4">
-                                            <div class="panel layui-bg-number">
-                                                <div class="panel-body">
-                                                    <div class="panel-title">
-                                                        <span class="label pull-right layui-bg-blue">实时</span>
-                                                        <h5>用户统计</h5>
-                                                    </div>
-                                                    <div class="panel-content">
-                                                        <h1 class="no-margins">1234</h1>
-                                                        <small>当前分类总记录数</small>
+                                            <div class="layui-col-md2 layui-col-xs4">
+                                                <div class="panel layui-bg-number">
+                                                    <div class="panel-body">
+                                                        <div class="panel-title">
+                                                            <span class="label pull-right layui-bg-blue">实时</span>
+                                                            <h5>用户统计</h5>
+                                                        </div>
+                                                        <div class="panel-content">
+                                                            <h1 class="no-margins">1234</h1>
+                                                            <small>当前分类总记录数</small>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         </form>
                     </div>
                 </div>
@@ -113,6 +119,7 @@
     const baseUrl = /*[[@{/}]]*/ '';
     /*]]>*/
 
+    //使用layui框架
     layui.use(function() {
         var form = layui.form;
         var $ = layui.jquery;
@@ -120,6 +127,7 @@
         // 当表单元素被插入插入时，需进行组件渲染才能显示
         // form.render("input",'recipe-form'); // 渲染全部表单
         form.render(); // 渲染全部表单
+
         // 提交事件
         form.on('submit(btn-submit)', function(data){
             var field = data.field; // 获取表单全部字段值
@@ -146,8 +154,8 @@
                     $('#reset-form').click();
                 }else {
                     layer.msg(response.message,{icon:5,time:1000,anim:6});
+                    $("#btn-submit").removeAttr("disabled","disabled").removeClass("layui-btn-disabled")
                 }
-                $("#btn-submit").removeAttr("disabled","disabled").removeClass("layui-btn-disabled")
             })
             return false; // 阻止默认 form 跳转
         });

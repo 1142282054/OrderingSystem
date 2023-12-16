@@ -31,6 +31,13 @@ public class RecipeController {
     @Resource
     RecipeService recipeService;
 
+    /**
+     * 获取菜谱展示列表
+     * 1.获取所有菜谱,存入session用于数据回显
+     * 2.跳转页面
+     * @param session
+     * @return
+     */
     @RequestMapping("/page")
     public String recipe(HttpSession session){
         List<Recipe> recipeList = recipeService.getAllRecipe();
@@ -39,12 +46,17 @@ public class RecipeController {
         return "manager/recipe";
     }
 
+    /**
+     * 获取菜谱信息
+     * @param page 分页条件,限制条件(菜名name)
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getRecipe")
     public Result getRecipe(RecipePage page){
         List<Recipe> recipeList = recipeService.getRecipeList(page);
         if (recipeList != null){
-            return Result.successful(recipeList,(long)recipeList.size());
+            return Result.successful(recipeList,(long)recipeService.getAllRecipe().size());
         }
         return Result.fail();
     }
@@ -54,6 +66,16 @@ public class RecipeController {
         return "manager/recipe/add";
     }
 
+
+//Resful风格
+    /**
+     * 更新菜谱页面
+     * 1.获取菜信息并存入session用于数据回显
+     * 2.跳转页面
+     * @param cid 菜id
+     * @param session
+     * @return
+     */
     @GetMapping("/{cid}")
     public String updateRecipePage(@PathVariable("cid") Integer cid, HttpSession session){
         Recipe recipe = recipeService.getRecipeByCid(cid);
@@ -63,6 +85,12 @@ public class RecipeController {
         return "manager/recipe/edit";
     }
 
+    /**
+     * 添加菜谱
+     * @param recipe 菜信息
+     * @return
+     * @throws IOException
+     */
     @ResponseBody
     @PostMapping("/addRecipe")
     public Result addRecipe(Recipe recipe) throws IOException {
@@ -82,6 +110,13 @@ public class RecipeController {
         return Result.successful();
     }
 
+    /**
+     * 更新菜的图片
+     * @param file 图片信息
+     * @param name 菜名
+     * @return
+     * @throws IOException
+     */
     @ResponseBody
     @PostMapping("/addRecipePic")
     public Result addRecipePic(@RequestParam("file")MultipartFile file,String name) throws IOException {
@@ -101,6 +136,12 @@ public class RecipeController {
         return Result.successful();
     }
 
+    /**
+     * 获取菜图片
+     * @param response
+     * @param cid 菜id
+     * @throws IOException
+     */
     @ResponseBody
     @RequestMapping("/getRecipePic")
     public void getRecipePic(HttpServletResponse response,Integer cid) throws IOException {
@@ -119,6 +160,11 @@ public class RecipeController {
         outputSream.close();
     }
 
+    /**
+     * 批量删除
+     * @param ids
+     * @return
+     */
     @ResponseBody
     @DeleteMapping("/{ids}")
     public Result deleteRecipe(@PathVariable("ids") String ids){
@@ -129,6 +175,11 @@ public class RecipeController {
         return Result.successful();
     }
 
+    /**
+     * 更新菜谱
+     * @param recipe
+     * @return
+     */
     @ResponseBody
     @PutMapping("")
     public Result updateRecipe(Recipe recipe){

@@ -8,6 +8,6 @@ import com.example.orderingsystem.user.po.Init;
  */
 public interface TestJsonMapper {
 
-    Init getInit();
+    Init getInit(Integer rid);
 
 }

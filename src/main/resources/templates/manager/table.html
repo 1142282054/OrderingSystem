@@ -24,7 +24,7 @@
                 <tr>
                     <th colspan="2" th:text="'员工：' + ${session.printList.get(0).user.nickname}">员工</th>
                     <th colspan="2" th:text="'联系电话：' + ${session.printList.get(0).user.phone}">联系电话</th>
-                    <th colspan="2" th:text="|统计月份 : ${session.page.startTime.getYear() + 1900}年${session.page.startTime.getMonth()}月|">统计月份</th>
+                    <th colspan="2" th:text="|统计月份 : ${session.page.startTime.getYear() + 1900}年${session.page.startTime.getMonth() + 1}月|">统计月份</th>
                 </tr>
                 <tr>
                     <th>时间</th><th>菜名</th><th>分量</th><th>单价</th><th>合计</th>

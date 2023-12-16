@@ -31,6 +31,15 @@ public class MenuController {
     @Resource
     MenuService menuService;
 
+    /**
+     * 批量添加
+     * 1.根据ids获取菜谱列表信息
+     * 2.获取菜单id(service)
+     * 3.将菜谱信息插入到菜单子表中(service)
+     * @param ids 菜id列表字符串 例:1,2,3
+     * @return
+     * @throws ParseException
+     */
     @ResponseBody
     @RequestMapping("/addMenu")
     public Result addMenu(String ids) throws ParseException {

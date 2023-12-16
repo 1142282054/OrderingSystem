@@ -27,7 +27,15 @@ public class EmployeeController {
     @Resource
     MenuService menuService;
 
-
+    /**
+     * 获取点餐页面
+     * 1.获取今日的菜单的菜列表
+     * 2.存入session域中
+     * 3.跳转页面
+     * @param session
+     * @return
+     * @throws ParseException 时间转换异常
+     */
     @GetMapping("/order")
     public String orderPage(HttpSession session) throws ParseException {
         List<MenuItem> menuList = menuService.getMenuByDate();
@@ -37,6 +45,13 @@ public class EmployeeController {
         return "employee/order";
     }
 
+    /**
+     * 获取临时点餐表信息
+     * 1.从session与中获取用户id
+     * 2.根据用户id获取选中的菜列表
+     * @param session
+     * @return 临时点餐表信息
+     */
     @ResponseBody
     @RequestMapping("/tmpOrder")
     public Result tmpOrder(HttpSession session){

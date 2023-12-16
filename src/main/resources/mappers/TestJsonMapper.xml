@@ -5,6 +5,6 @@
 
 <mapper namespace="com.example.orderingsystem.user.mapper.TestJsonMapper">
     <select id="getInit" resultType="com.example.orderingsystem.user.po.Init">
-        select *  from init
+        select *  from init where rid = #{rid}
     </select>
 </mapper>
